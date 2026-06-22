@@ -1,0 +1,27 @@
+{
+  "name": "due2-cli",
+  "version": "1.0.0",
+  "description": "Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with E2EE. Skill for the due2-cli tool.",
+  "author": {
+    "name": "MyIAM",
+    "email": "sheldon.park@myiam.io"
+  },
+  "repository": "https://github.com/due2-app/due2-cli-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "due2",
+    "deadline",
+    "subscription",
+    "reminder",
+    "cli",
+    "e2ee",
+    "encryption"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "due2-cli",
+    "shortDescription": "Deadline management with E2EE",
+    "developerName": "MyIAM",
+    "category": "Productivity"
+  }
+}

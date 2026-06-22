@@ -1,10 +1,12 @@
-# due2-cli Plugin for Claude Code
+# due2-cli Plugin for AI Coding Agents
 
-Claude Code plugin for [due2-cli](https://github.com/myiam-io/due2-cli) — manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with end-to-end encryption.
+[한국어](docs/README.ko.md) | [日本語](docs/README.ja.md)
+
+[due2-cli](https://github.com/myiam-io/due2-cli) command reference for AI coding agents — manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with end-to-end encryption.
 
 ## Install
 
-### Option 1: Add marketplace + install
+### Claude Code
 
 ```bash
 # Add this repo as a marketplace (one-time)
@@ -14,11 +16,41 @@ claude plugin marketplace add due2-app/due2-cli-plugin
 claude plugin install due2-cli@due2-cli
 ```
 
-### Option 2: Local (for development)
+Local development:
 
 ```bash
 git clone https://github.com/due2-app/due2-cli-plugin.git
 claude --plugin-dir ./due2-cli-plugin
+```
+
+### OpenAI Codex CLI
+
+```bash
+# Add this repo as a marketplace (one-time)
+codex plugin marketplace add due2-app/due2-cli-plugin
+
+# Install the plugin
+codex plugin install due2-cli
+```
+
+Local development:
+
+```bash
+git clone https://github.com/due2-app/due2-cli-plugin.git
+codex --plugin-dir ./due2-cli-plugin
+```
+
+### Google Gemini CLI
+
+```bash
+gemini extensions install https://github.com/due2-app/due2-cli-plugin
+```
+
+Local development:
+
+```bash
+git clone https://github.com/due2-app/due2-cli-plugin.git
+gemini extensions link ./due2-cli-plugin
 ```
 
 ## Prerequisites
@@ -43,25 +75,59 @@ due2-cli unlock
 
 ## What's included
 
-- **`/due2` skill** — Full command reference for due2-cli covering:
-  - Install & setup (login, unlock, lock, env vars for CI)
-  - Core CRUD (add, list, show, edit, delete, archive, restore, renew)
-  - Bulk operations (add, edit, delete, archive, restore, share)
-  - Groups & sharing with E2EE key distribution
-  - Packs (named item collections)
-  - Public packs & items (browse, follow, save, feedback, report, discover)
-  - Dashboard & account management (summary, plan, settings, feedback)
+| Agent | File | Scope |
+|---|---|---|
+| Claude Code | `skills/due2/SKILL.md` | `/due2` skill — auto-triggers on deadline/subscription queries |
+| Codex CLI | `skills/due2/SKILL.md` | `@due2` skill — auto-triggers on deadline/subscription queries |
+| Gemini CLI | `skills/due2/SKILL.md` | Extension skill — auto-triggers on deadline/subscription queries |
+
+All files cover the full due2-cli command reference:
+- Install & setup (login, unlock, lock, env vars for CI)
+- Core CRUD (add, list, show, edit, delete, archive, restore, renew)
+- Bulk operations (add, edit, delete, archive, restore, share)
+- Groups & sharing with E2EE key distribution
+- Schedule packs (named item collections)
+- Public schedule packs & items (browse, follow, save, feedback, report, discover)
+- Dashboard & account management (summary, plan, settings, feedback)
 
 ## Update
+
+### Claude Code
 
 ```bash
 claude plugin update due2-cli
 ```
 
+### Codex CLI
+
+```bash
+codex plugin upgrade due2-cli
+```
+
+### Gemini CLI
+
+```bash
+gemini extensions install https://github.com/due2-app/due2-cli-plugin
+```
+
 ## Uninstall
+
+### Claude Code
 
 ```bash
 claude plugin uninstall due2-cli
+```
+
+### Codex CLI
+
+```bash
+codex plugin uninstall due2-cli
+```
+
+### Gemini CLI
+
+```bash
+gemini extensions uninstall due2-cli
 ```
 
 ## License

@@ -24,19 +24,19 @@ brew install --cask due2
 ## Setup (required before any data command)
 
 ```bash
-# 1. Login — opens browser for MyIAM OAuth
-due2-cli login
+# 1. Login + Unlock in one step (recommended)
+due2-cli login --unlock          # login → opens browser for PIN/password → unlock
+due2-cli login --unlock --ttl 120  # custom TTL
 
-# 2. Unlock — caches DEK in OS keychain (default 60 min)
-due2-cli unlock
-
-# Unlock with stdin (automation/AI tools):
-echo "1234" | due2-cli unlock --pin-stdin
-echo "mypassword" | due2-cli unlock --password-stdin
+# Or separately:
+due2-cli login                   # login only
+due2-cli unlock                  # opens browser for PIN/password (default)
+due2-cli unlock --prompt         # interactive terminal prompt instead of browser
+due2-cli unlock --no-browser     # print URL instead of opening browser
 
 # Lock — clear cached DEK
 due2-cli lock
-due2-cli lock --forget    # also remove from keychain
+due2-cli lock --forget           # also remove from keychain
 
 # Non-interactive (CI/scripts):
 DUE2_MASTER_PASSWORD=... due2-cli list --json
@@ -47,7 +47,7 @@ due2-cli version --json
 due2-cli --version
 ```
 
-Encryption mode is set per user in the mobile app: `pin` (4-digit) or `password` (master password, default). The CLI auto-detects the mode from the server and prompts accordingly. Both modes use Argon2id KDF with the same parameters.
+Encryption mode is set per user in the mobile app: `pin` (4-digit) or `password` (master password, default). The CLI auto-detects the mode from the server and prompts accordingly. Both modes use Argon2id KDF with the same parameters. The `unlock` command opens a local browser page by default for secure PIN/password input — credentials never appear in shell history or process lists.
 
 Data commands (`list`, `add`, `edit`, `delete`, `archive`, `restore`, `bulk`, `group`, `show`, `renew`, `summary`, `pack`) require unlock. Non-data commands (`login`, `logout`, `whoami`, `lock`, `schema`, `settings`, `feedback`, `account`, `public`, `plan`, `version`) do not.
 
@@ -304,14 +304,15 @@ due2-cli account delete --force --json
 
 ## Workflow Guide
 
-1. **Single item** → `add`, `edit`, `delete`, `show`
-2. **Multiple items at once** → `bulk add`, `bulk edit`, `bulk delete`, `bulk archive`, `bulk restore` (stdin JSON, max 50)
-3. **Need collaborators** → create `group` → `invite` → `key-distribute` → `share add` or `--share-mode share` on add
-4. **Recurring items expired** → `renew` to advance to next cycle
-5. **Organize items** → `pack create` → `add --pack <id>` or `edit --pack <id>` to associate items, `edit --clear pack_id` to detach
-6. **Discover public schedules** → `public discover` for popular/recent overview → `public packs` to browse → `public follow <pack-id>` → `public items` to see recommendations → `public save <item-id>` to bookmark → `public report <item-id>` to flag problematic items
-7. **Check what's urgent** → `summary` for overdue/urgent/upcoming overview, `plan` for tier/usage
-8. **Scripting/CI** → set `DUE2_MASTER_PASSWORD` or `DUE2_PIN` env var, always use `--json`
+1. **First time setup** → `login --unlock` (login + unlock in one step)
+2. **Single item** → `add`, `edit`, `delete`, `show`
+3. **Multiple items at once** → `bulk add`, `bulk edit`, `bulk delete`, `bulk archive`, `bulk restore` (stdin JSON, max 50)
+4. **Need collaborators** → create `group` → `invite` → `key-distribute` → `share add` or `--share-mode share` on add
+5. **Recurring items expired** → `renew` to advance to next cycle
+6. **Organize items** → `pack create` → `add --pack <id>` or `edit --pack <id>` to associate items, `edit --clear pack_id` to detach
+7. **Discover public schedules** → `public discover` for popular/recent overview → `public packs` to browse → `public follow <pack-id>` → `public items` to see recommendations → `public save <item-id>` to bookmark → `public report <item-id>` to flag problematic items
+8. **Check what's urgent** → `summary` for overdue/urgent/upcoming overview, `plan` for tier/usage
+9. **Scripting/CI** → set `DUE2_MASTER_PASSWORD` or `DUE2_PIN` env var, always use `--json`
 
 ## Schema
 

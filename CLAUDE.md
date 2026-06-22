@@ -4,15 +4,17 @@
 
 ## 프로젝트 개요
 
-[due2-cli](https://github.com/myiam-io/due2-cli)용 Claude Code 플러그인. due2-cli는 마감 항목(구독, 보험, 세금, 비자 등)을 종단간 암호화로 관리하는 CLI 도구이며, 이 플러그인은 `/due2` 스킬을 통해 Claude Code에 전체 명령어 레퍼런스를 제공한다.
+[due2-cli](https://github.com/myiam-io/due2-cli)용 AI 코딩 에이전트 플러그인. due2-cli는 마감 항목(구독, 보험, 세금, 비자 등)을 종단간 암호화로 관리하는 CLI 도구이며, 이 플러그인은 Claude Code(`/due2`)와 Codex CLI(`@due2`) 스킬을 통해 전체 명령어 레퍼런스를 제공한다.
 
 코드 프로젝트가 **아님** — 빌드, 테스트, 컴파일 대상 소스가 없다. 선언적 설정 파일과 스킬 마크다운 파일로만 구성된다.
 
 ## 저장소 구조
 
-- `.claude-plugin/plugin.json` — 플러그인 메타데이터 (이름, 버전, 설명, 키워드)
-- `.claude-plugin/marketplace.json` — `claude plugin` 명령어를 통한 마켓플레이스 등록 설정
-- `skills/due2/SKILL.md` — `/due2` 스킬 정의. 이 저장소의 핵심 산출물로, Claude Code가 due2-cli를 조작할 때 사용하는 전체 명령어 레퍼런스. frontmatter의 `name`과 `description`이 스킬 자동 트리거 조건을 결정한다.
+- `.claude-plugin/plugin.json` — Claude Code 플러그인 메타데이터
+- `.claude-plugin/marketplace.json` — Claude Code 마켓플레이스 등록 설정
+- `.codex-plugin/plugin.json` — Codex CLI 플러그인 메타데이터
+- `skills/due2/SKILL.md` — `/due2` 스킬 정의. 이 저장소의 핵심 산출물로, Claude Code와 Codex CLI가 due2-cli를 조작할 때 사용하는 전체 명령어 레퍼런스. frontmatter의 `name`과 `description`이 스킬 자동 트리거 조건을 결정한다.
+- `gemini-extension.json` — Gemini CLI extension 메타데이터
 
 ## 개발
 
