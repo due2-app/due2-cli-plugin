@@ -8,7 +8,7 @@ Claude Code plugin for [due2-cli](https://github.com/myiam-io/due2-cli) — mana
 
 ```bash
 # Add this repo as a marketplace (one-time)
-claude plugin marketplace add myiam-io/due2-cli-plugin
+claude plugin marketplace add due2-app/due2-cli-plugin
 
 # Install the plugin
 claude plugin install due2-cli@due2-cli
@@ -17,7 +17,7 @@ claude plugin install due2-cli@due2-cli
 ### Option 2: Local (for development)
 
 ```bash
-git clone https://github.com/myiam-io/due2-cli-plugin.git
+git clone https://github.com/due2-app/due2-cli-plugin.git
 claude --plugin-dir ./due2-cli-plugin
 ```
 
