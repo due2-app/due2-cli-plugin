@@ -23,11 +23,15 @@ claude --plugin-dir ./due2-cli-plugin
 
 ## Prerequisites
 
-Install [due2-cli](https://github.com/myiam-io/due2-cli) first:
+Install [due2-cli](https://github.com/myiam-io/due2-cli):
 
 ```bash
+# macOS (Homebrew)
 brew tap myiam-io/tap
 brew install due2-cli
+
+# Windows (winget)
+winget install myiam.Due2.CLI
 ```
 
 Then login and unlock:
@@ -40,6 +44,7 @@ due2-cli unlock
 ## What's included
 
 - **`/due2` skill** — Full command reference for due2-cli covering:
+  - Install & setup (login, unlock, lock, env vars for CI)
   - Core CRUD (add, list, show, edit, delete, archive, restore, renew)
   - Bulk operations (add, edit, delete, archive, restore, share)
   - Groups & sharing with E2EE key distribution

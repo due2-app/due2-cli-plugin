@@ -7,6 +7,20 @@ description: Manage deadline items (subscriptions, insurance, taxes, visas, etc.
 
 Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with end-to-end encryption.
 
+## Install
+
+```bash
+# macOS (Homebrew)
+brew tap myiam-io/tap
+brew install due2-cli
+
+# Windows (winget)
+winget install myiam.Due2.CLI
+
+# Due2 desktop app (macOS cask)
+brew install --cask due2
+```
+
 ## Setup (required before any data command)
 
 ```bash
