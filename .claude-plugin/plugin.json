@@ -6,7 +6,7 @@
     "name": "MyIAM",
     "email": "sheldon.park@myiam.io"
   },
-  "repository": "https://github.com/myiam-io/due2-cli-plugin",
+  "repository": "https://github.com/due2-app/due2-cli-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "due2",

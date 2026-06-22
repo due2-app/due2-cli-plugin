@@ -1,3 +1,8 @@
+---
+name: due2
+description: Manage deadline items (subscriptions, insurance, taxes, visas, etc.) via due2-cli. Use when the user asks to add, list, edit, delete, renew, archive, share, or bulk-manage deadlines, subscriptions, or reminders.
+---
+
 # Due2 CLI
 
 Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with end-to-end encryption.
