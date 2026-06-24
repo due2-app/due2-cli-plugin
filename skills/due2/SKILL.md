@@ -49,11 +49,11 @@ due2-cli --version
 
 Encryption mode is set per user in the mobile app: `pin` (4-digit) or `password` (master password, default). The CLI auto-detects the mode from the server and prompts accordingly. Both modes use Argon2id KDF with the same parameters. The `unlock` command opens a local browser page by default for secure PIN/password input — credentials never appear in shell history or process lists.
 
-Data commands (`list`, `add`, `edit`, `delete`, `archive`, `restore`, `bulk`, `group`, `show`, `renew`, `summary`, `pack`) require unlock. Non-data commands (`login`, `logout`, `whoami`, `lock`, `schema`, `settings`, `feedback`, `account`, `public`, `plan`, `version`) do not.
+Data commands (`list`, `add`, `edit`, `delete`, `archive`, `restore`, `bulk`, `group`, `show`, `renew`, `summary`, `pack`) require a DEK. The DEK is auto-resolved from env vars, OS keychain cache, or interactive prompt — explicit `unlock` is not required. Group DEKs are also auto-resolved using the personal DEK when `recovery_encrypted_dek` is available. Use `unlock` explicitly only to cache credentials in the keychain or to handle legacy group keys without `recovery_encrypted_dek`. Non-data commands (`login`, `logout`, `whoami`, `lock`, `schema`, `settings`, `feedback`, `account`, `public`, `plan`, `version`) do not need a DEK.
 
 ## Output
 
-Always use `--json` for machine-readable output. Errors go to stderr as `{"error":"..","code":N}`. Exit codes: 0=ok, 1=error, 3=bad_input, 64=usage.
+Always use `--json` for machine-readable output. Errors go to stderr as `{"error":"..","code":N}`. Exit codes: 0=ok, 1=error, 3=bad_input, 64=usage. All list commands support `-l` (limit, 1-100, default 20) and `-p` (page, default 1). JSON output includes `total_count`, `page`, `total_pages`.
 
 ## Core CRUD
 
@@ -158,6 +158,7 @@ due2-cli share add -i <item-id> -u <user-id> -g <group-id> -p write --json  # wr
 
 # List shares for an item
 due2-cli share list <item-id> --json
+due2-cli share list <item-id> -l 50 -p 2 --json    # paginated
 
 # Remove a share
 due2-cli share remove <share-id> --json
@@ -181,6 +182,7 @@ due2-cli group members --json
 
 # Other group operations
 due2-cli group list --json
+due2-cli group list -l 50 -p 2 --json              # paginated
 due2-cli group show --json
 due2-cli group update -n "New Name" --json
 due2-cli group kick -u <user-id> --group <uuid> --json
@@ -199,6 +201,7 @@ Organize related items into named collections.
 # Pack CRUD
 due2-cli pack create -n "2026 Tax Season" --description "Tax deadlines" --start-date 2026-01-01 --target-date 2026-05-31 --json
 due2-cli pack list --json
+due2-cli pack list -l 50 -p 2 --json               # paginated
 due2-cli pack show <id> --json
 due2-cli pack edit <id> -n "Updated Name" --json
 due2-cli pack archive <id> --json
@@ -224,9 +227,11 @@ Browse, follow, and save public packs and items. No DEK/unlock needed — just l
 due2-cli public packs --json
 due2-cli public packs -c tax --json                     # filter by category
 due2-cli public packs -q "세금" --json                   # search title/description
+due2-cli public packs -l 50 -p 2 --json                  # paginated
 
 # Show pack details + items
 due2-cli public show <pack-id> --json
+due2-cli public show <pack-id> -l 50 -p 2 --json        # paginated items
 
 # Follow / unfollow a pack
 due2-cli public follow <pack-id> --json
@@ -234,10 +239,12 @@ due2-cli public unfollow <pack-id> --json
 
 # List followed packs
 due2-cli public following --json
+due2-cli public following -l 50 -p 2 --json              # paginated
 
 # List recommended items from followed packs
 due2-cli public items --json
 due2-cli public items --pack <pack-id> --json           # filter by pack
+due2-cli public items -l 50 -p 2 --json                  # paginated
 
 # Save / unsave a public item
 due2-cli public save <item-id> --json
@@ -245,6 +252,7 @@ due2-cli public unsave <item-id> --json
 
 # List saved items
 due2-cli public saved --json
+due2-cli public saved -l 50 -p 2 --json                  # paginated
 
 # Submit feedback on a saved item (requires save first)
 due2-cli public feedback <item-id> --accurate true --rating 4 --message "정확해요" --json
@@ -294,6 +302,7 @@ due2-cli settings update --timezone Asia/Seoul --notify-times 09:00,18:00 --json
 # Feedback (daily limit: free=1, plus=3, pro=5)
 due2-cli feedback send -m "Bug report" --type bug --json
 due2-cli feedback list --json
+due2-cli feedback list -l 50 -p 2 --json  # paginated
 
 # Bulk feedback (stdin JSON, sends up to daily limit remaining)
 echo '[{"message":"Bug report","type":"bug"},{"message":"Feature request","type":"suggestion"}]' | due2-cli feedback bulk-send --json
@@ -304,7 +313,7 @@ due2-cli account delete --force --json
 
 ## Workflow Guide
 
-1. **First time setup** → `login --unlock` (login + unlock in one step)
+1. **First time setup** → `login` (DEK and group DEKs are auto-resolved on first data command; `login --unlock` also available to pre-cache credentials)
 2. **Single item** → `add`, `edit`, `delete`, `show`
 3. **Multiple items at once** → `bulk add`, `bulk edit`, `bulk delete`, `bulk archive`, `bulk restore` (stdin JSON, max 50)
 4. **Need collaborators** → create `group` → `invite` → `key-distribute` → `share add` or `--share-mode share` on add
