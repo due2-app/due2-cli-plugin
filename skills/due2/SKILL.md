@@ -49,7 +49,7 @@ due2-cli --version
 
 Encryption mode is set per user in the mobile app: `pin` (4-digit) or `password` (master password, default). The CLI auto-detects the mode from the server and prompts accordingly. Both modes use Argon2id KDF with the same parameters. The `unlock` command opens a local browser page by default for secure PIN/password input — credentials never appear in shell history or process lists.
 
-Data commands (`list`, `add`, `edit`, `delete`, `archive`, `restore`, `bulk`, `group`, `show`, `renew`, `summary`, `pack`) require a DEK. The DEK is auto-resolved from env vars, OS keychain cache, or interactive prompt — explicit `unlock` is not required. Group DEKs are also auto-resolved using the personal DEK when `recovery_encrypted_dek` is available. Use `unlock` explicitly only to cache credentials in the keychain or to handle legacy group keys without `recovery_encrypted_dek`. Non-data commands (`login`, `logout`, `whoami`, `lock`, `schema`, `settings`, `feedback`, `account`, `public`, `plan`, `version`) do not need a DEK.
+Data commands (`list`, `add`, `edit`, `delete`, `archive`, `restore`, `bulk`, `group`, `show`, `renew`, `summary`, `pack`, `todo`) require a DEK. The DEK is auto-resolved from env vars, OS keychain cache, or interactive prompt — explicit `unlock` is not required. Group DEKs are also auto-resolved using the personal DEK when `recovery_encrypted_dek` is available. Use `unlock` explicitly only to cache credentials in the keychain or to handle legacy group keys without `recovery_encrypted_dek`. Non-data commands (`login`, `logout`, `whoami`, `lock`, `schema`, `settings`, `feedback`, `account`, `public`, `plan`, `version`) do not need a DEK.
 
 ## Output
 
@@ -218,6 +218,49 @@ due2-cli edit <item-id> --pack <pack-id> --json
 due2-cli edit <item-id> --clear pack_id --json
 ```
 
+## Todo
+
+Simple checklist items grouped into projects — no due date, unlike the core CRUD above. Both the project `name` and item `content` are encrypted (`--json` decrypts transparently). Personal-use only (no group sharing).
+
+```bash
+# Projects
+due2-cli todo project add -n "Home" --json
+due2-cli todo project list --json
+due2-cli todo project rename <project-id> -n "Renamed" --json
+due2-cli todo project delete <project-id> --force --json   # cascades: deletes all items in it
+
+# Items
+due2-cli todo add --project <project-id> -c "Buy milk" --json
+due2-cli todo list --project <project-id> --json
+due2-cli todo list --project <project-id> -s inProgress --json   # pending|inProgress|done
+due2-cli todo edit <item-id> -c "Buy oat milk" --json
+due2-cli todo status <item-id> -s done --json
+due2-cli todo status-message <item-id> -m "Refactoring auth module" --json   # for agents to report progress
+due2-cli todo status-message <item-id> -m "27/27 유닛 테스트 통과" -t "테스트중" --tone success --json
+due2-cli todo status-message <item-id> --clear --json                       # wipe title/tone/message/timestamp together
+due2-cli todo delete <item-id> --json    # soft delete, no restore command
+```
+
+New items are placed at the end of the pending block. Changing status re-places the item within its target block: `inProgress`/`pending` go to the end of their block, `done` goes to the front of its block. Block order is always `[inProgress, pending, done]`.
+
+`status-message` lets an AI agent working on a todo item leave a short note on what it's currently doing. `-m/--message` is the body text; `-t/--title` is an optional short free-text label (e.g. "테스트중") shown next to the relative time in the app's badge — if omitted, the app falls back to a fixed label for the tone; `--tone` is one of `neutral` (default) / `attention` / `success` / `error` and controls the badge's color/icon only (don't invent new tones — put scenario-specific wording in `--title`/`--message`). `status_message_at` is auto-stamped in UTC by the CLI (not user-settable). Every `--message` call replaces title/tone wholesale (not merged with the previous call); `--clear` wipes all four fields and can't be combined with `--message`/`--title`/`--tone`. `todo list`/`todo edit` etc. carry these fields forward automatically — no action needed unless you're specifically updating the status message.
+
+### Content formatting
+
+`todo add`/`todo edit`'s `content` is a plain string in the database — the CLI never parses or stores anything about formatting. The app renders a lightweight inline syntax **for display only** (not applied to project names, not live while a field is being edited in the app), so an agent writing `content` can use it to make items more scannable:
+
+| Syntax | Example | Renders as |
+|---|---|---|
+| `#tag` | `#긴급` | Colored tag (marker kept) |
+| `@word` (start of string or after a space, not inside an email) | `@7/15 세금 신고` | Colored, `@` marker hidden |
+| `**text**` | `**중요** 사항` | Bold, markers hidden |
+| `` `text` `` | `` 이건 `code` 야 `` | Code-style highlight, backticks hidden |
+| `[text]` / `{text}` / `(text)` — only at the very start of the string | `[분류] 문서 준비` | Rounded badge (brackets hidden) |
+| URL / domain / email / phone number | `https://example.com` | Auto-linked |
+| Date-like text (ISO/Korean/`YYYYMMDD`) | `2026-07-15` | Detected, no special color (just avoids other syntax misfiring on it) |
+
+Escape a trigger character with `\` to keep it literal (e.g. `\#not-a-tag`). No priority/`!` syntax exists. This is purely cosmetic — don't build any of this into CLI output; `todo list`'s plain-text mode just prints the raw string as-is.
+
 ## Public Packs & Items
 
 Browse, follow, and save public packs and items. No DEK/unlock needed — just login.
@@ -321,7 +364,8 @@ due2-cli account delete --force --json
 6. **Organize items** → `pack create` → `add --pack <id>` or `edit --pack <id>` to associate items, `edit --clear pack_id` to detach
 7. **Discover public schedules** → `public discover` for popular/recent overview → `public packs` to browse → `public follow <pack-id>` → `public items` to see recommendations → `public save <item-id>` to bookmark → `public report <item-id>` to flag problematic items
 8. **Check what's urgent** → `summary` for overdue/urgent/upcoming overview, `plan` for tier/usage
-9. **Scripting/CI** → set `DUE2_MASTER_PASSWORD` or `DUE2_PIN` env var, always use `--json`
+9. **Simple checklists (no due date)** → `todo project add` → `todo add --project <id>` → `todo status <id> -s done`
+10. **Scripting/CI** → set `DUE2_MASTER_PASSWORD` or `DUE2_PIN` env var, always use `--json`
 
 ## Schema
 
