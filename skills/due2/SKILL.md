@@ -239,9 +239,16 @@ due2-cli todo status-message <item-id> -m "Refactoring auth module" --json   # f
 due2-cli todo status-message <item-id> -m "27/27 유닛 테스트 통과" -t "테스트중" --tone success --json
 due2-cli todo status-message <item-id> --clear --json                       # wipe title/tone/message/timestamp together
 due2-cli todo delete <item-id> --json    # soft delete, no restore command
+
+# Old completed items
+due2-cli todo list -s done --completed-before 2026-07-01 --json   # cleanup candidates: done items completed before that date
+due2-cli todo list --completed-after 2026-07-01 --json            # hide stale done items, keep pending/inProgress + recent done
+due2-cli todo delete --purge-done-before 2026-07-01 --force --json  # bulk soft-delete all matching done items, all pages
 ```
 
-New items are placed at the end of the pending block. Changing status re-places the item within its target block: `inProgress`/`pending` go to the end of their block, `done` goes to the front of its block. Block order is always `[inProgress, pending, done]`.
+New items are placed at the end of the pending block. Changing status re-places the item within its target block: `inProgress`/`pending` go to the end of their block, `done` goes to the front of its block. Block order is always `[inProgress, pending, done]`. Transitioning to `done` auto-stamps `completed_at` (UTC); transitioning away from `done` clears it — the app uses this to hide old completed items after a few days, no action needed from the CLI side.
+
+`--completed-before`/`--completed-after` (YYYY-MM-DD) filter `todo list` by `completed_at`: `--completed-before` only returns `done` items completed before that date (useful combined with `-s done` to find cleanup candidates); `--completed-after` excludes stale `done` items while leaving pending/inProgress items (which have no `completed_at`) untouched. `todo delete --purge-done-before <date> --force` loops every page of matching `done` items and soft-deletes them — same shape as `delete --empty-trash` for due items.
 
 `status-message` lets an AI agent working on a todo item leave a short note on what it's currently doing. `-m/--message` is the body text; `-t/--title` is an optional short free-text label (e.g. "테스트중") shown next to the relative time in the app's badge — if omitted, the app falls back to a fixed label for the tone; `--tone` is one of `neutral` (default) / `attention` / `success` / `error` and controls the badge's color/icon only (don't invent new tones — put scenario-specific wording in `--title`/`--message`). `status_message_at` is auto-stamped in UTC by the CLI (not user-settable). Every `--message` call replaces title/tone wholesale (not merged with the previous call); `--clear` wipes all four fields and can't be combined with `--message`/`--title`/`--tone`. `todo list`/`todo edit` etc. carry these fields forward automatically — no action needed unless you're specifically updating the status message.
 
@@ -356,7 +363,7 @@ due2-cli account delete --force --json
 
 ## Workflow Guide
 
-1. **First time setup** → `login` (DEK and group DEKs are auto-resolved on first data command; `login --unlock` also available to pre-cache credentials)
+1. **First time setup** → `login --unlock` (login + unlock in one step; plain `login` also works since DEK is auto-resolved on first data command, but `--unlock` avoids a second prompt)
 2. **Single item** → `add`, `edit`, `delete`, `show`
 3. **Multiple items at once** → `bulk add`, `bulk edit`, `bulk delete`, `bulk archive`, `bulk restore` (stdin JSON, max 50)
 4. **Need collaborators** → create `group` → `invite` → `key-distribute` → `share add` or `--share-mode share` on add
