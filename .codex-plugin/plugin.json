@@ -1,6 +1,6 @@
 {
   "name": "due2-cli",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with E2EE. Skill for the due2-cli tool.",
   "author": {
     "name": "MyIAM",

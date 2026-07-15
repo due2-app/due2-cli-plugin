@@ -9,7 +9,7 @@
       "name": "due2-cli",
       "source": "./",
       "description": "Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with E2EE",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "author": {
         "name": "MyIAM",
         "email": "sheldon.park@myiam.io"
