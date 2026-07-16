@@ -1,12 +1,12 @@
 {
-  "name": "due2-cli",
+  "name": "due2",
   "description": "Claude Code plugin for due2-cli — deadline management with E2EE",
   "owner": {
     "name": "MyIAM"
   },
   "plugins": [
     {
-      "name": "due2-cli",
+      "name": "due2",
       "source": "./",
       "description": "Manage deadline items (subscriptions, insurance, taxes, visas, etc.) from the terminal with E2EE",
       "version": "1.1.0",

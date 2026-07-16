@@ -13,7 +13,7 @@
 claude plugin marketplace add due2-app/due2-cli-plugin
 
 # プラグインをインストール
-claude plugin install due2-cli@due2-cli
+claude plugin install due2@due2
 ```
 
 ローカル開発:
@@ -30,7 +30,7 @@ claude --plugin-dir ./due2-cli-plugin
 codex plugin marketplace add due2-app/due2-cli-plugin
 
 # プラグインをインストール
-codex plugin install due2-cli
+codex plugin install due2
 ```
 
 ローカル開発:
@@ -95,13 +95,13 @@ due2-cli unlock
 ### Claude Code
 
 ```bash
-claude plugin update due2-cli
+claude plugin update due2
 ```
 
 ### Codex CLI
 
 ```bash
-codex plugin upgrade due2-cli
+codex plugin upgrade due2
 ```
 
 ### Gemini CLI
@@ -115,19 +115,19 @@ gemini extensions install https://github.com/due2-app/due2-cli-plugin
 ### Claude Code
 
 ```bash
-claude plugin uninstall due2-cli
+claude plugin uninstall due2
 ```
 
 ### Codex CLI
 
 ```bash
-codex plugin uninstall due2-cli
+codex plugin uninstall due2
 ```
 
 ### Gemini CLI
 
 ```bash
-gemini extensions uninstall due2-cli
+gemini extensions uninstall due2
 ```
 
 ## ライセンス

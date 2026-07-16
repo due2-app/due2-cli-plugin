@@ -26,7 +26,7 @@ claude --plugin-dir ./due2-cli-plugin
 `due2-app/due2-cli-plugin` GitHub 저장소에 push하면 배포된다. 사용자 설치:
 ```bash
 claude plugin marketplace add due2-app/due2-cli-plugin
-claude plugin install due2-cli@due2-cli
+claude plugin install due2@due2
 ```
 
 ## 관련 저장소
